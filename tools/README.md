@@ -24,6 +24,8 @@
 `index.html` 은 비밀번호로 암호화돼 있다. 이름·참여율은 비밀번호가 맞아야 브라우저에서 풀린다.
 비밀번호는 저장소에 저장하지 않으니 따로 잘 보관할 것 (잊으면 복구 불가 → 엑셀로 다시 만들어야 함).
 
+- 비밀번호는 Dashboard 와 같다(같은 사이트라 Dashboard 에서 「기억」한 브라우저는 바로 열림).
 - 월별 갱신: `update_month.py` 가 실행 중 비밀번호를 물어본다.
+  PC 의 Dashboard 게이트 설정 파일을 쓰려면 먼저 `set GATE_CONF=<gate_conf.json 경로>` (Windows).
 - 디자인 수정: `python tools/pagecrypt.py decrypt` → `page.plain.html` 수정 → `python tools/pagecrypt.py encrypt` → `page.plain.html` 삭제
 - 비밀번호 변경: `python tools/pagecrypt.py repass` (모든 사람이 새 비밀번호로 다시 입력해야 함)

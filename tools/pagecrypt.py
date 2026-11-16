@@ -9,7 +9,8 @@ index.html 에는 암호문과 비밀번호 입력 화면만 들어가고, 이�
     python tools/pagecrypt.py decrypt page.plain.html     # index.html → 평문 (디자인 수정용)
     python tools/pagecrypt.py encrypt page.plain.html     # 평문 → index.html
     python tools/pagecrypt.py repass                       # 비밀번호 변경
-비밀번호는 환경변수 PAGE_PASSWORD 가 있으면 그것을, 없으면 입력을 받는다.
+비밀번호는 Dashboard 와 같다. 환경변수 PAGE_PASSWORD, 또는 GATE_CONF(Dashboard 의
+gate_conf.json 경로)가 있으면 그것을 쓰고, 없으면 입력을 받는다.
 평문 파일(page.plain.html)은 .gitignore 에 막혀 있으니 커밋되지 않는다. 작업 후 지워도 된다.
 """
 import base64, getpass, json, os, re, sys
@@ -61,6 +62,9 @@ def password(confirm=False, prompt="페이지 비밀번호: "):
     pw = os.environ.get("PAGE_PASSWORD")
     if pw:
         return pw
+    conf = os.environ.get("GATE_CONF")  # Dashboard 게이트 설정 파일(gate_conf.json) 경로
+    if conf and not confirm:
+        return json.load(open(conf, encoding="utf-8"))["password"]
     pw = getpass.getpass(prompt)
     if confirm and getpass.getpass("한 번 더: ") != pw:
         sys.exit("두 비밀번호가 다릅니다.")
