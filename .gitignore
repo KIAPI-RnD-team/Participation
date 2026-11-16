@@ -1,0 +1,10 @@
+# 원본 엑셀·데이터 파일은 저장소에 절대 올리지 않는다 (금액 포함)
+*.xlsx
+*.xlsm
+*.xls
+*.xlsb
+*.csv
+~$*
+__pycache__/
+page.plain.html
+*.plain.html
