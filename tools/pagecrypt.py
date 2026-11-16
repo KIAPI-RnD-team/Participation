@@ -22,7 +22,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 INDEX = Path(__file__).resolve().parent.parent / "index.html"
 SHELL = Path(__file__).resolve().parent / "lock_shell.html"
 ITER = 310_000
-MARK = re.compile(r'<script id="payload" type="application/json">(.*?)</script>', re.S)
+MARK = re.compile(r'var VAULT = (\{.*?\});')
 
 b64 = lambda b: base64.b64encode(b).decode()
 
@@ -43,14 +43,14 @@ def encrypt(plain_html, pw, salt=None):
     # salt 를 유지하면 「이 기기에서 기억하기」 한 사람은 월별 갱신 뒤에도 다시 입력하지 않아도 된다.
     salt, iv = salt or os.urandom(16), os.urandom(12)
     ct = AESGCM(_key(pw, salt, ITER)).encrypt(iv, plain_html.encode("utf-8"), None)
-    payload = json.dumps({"v": 1, "iter": ITER, "salt": b64(salt), "iv": b64(iv), "ct": b64(ct)})
+    payload = json.dumps({"v": 1, "it": ITER, "salt": b64(salt), "iv": b64(iv), "ct": b64(ct)})
     shell = SHELL.read_text(encoding="utf-8")
     return shell.replace("__PAYLOAD__", payload)
 
 
 def decrypt(locked_html, pw):
     p = json.loads(MARK.search(locked_html).group(1))
-    key = _key(pw, base64.b64decode(p["salt"]), p["iter"])
+    key = _key(pw, base64.b64decode(p["salt"]), p["it"])
     try:
         return AESGCM(key).decrypt(base64.b64decode(p["iv"]), base64.b64decode(p["ct"]), None).decode("utf-8")
     except Exception:
